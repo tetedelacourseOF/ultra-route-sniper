@@ -1,4 +1,4 @@
-const CACHE_NAME = "ultra-route-sniper-shell-v5";
+const CACHE_NAME = "ultra-route-sniper-shell-v6";
 const ASSETS = [
   "./",
   "./index.html",
