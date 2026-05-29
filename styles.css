@@ -1,645 +1,257 @@
-:root {
-  color-scheme: dark;
-  --bg: #050509;
-  --bg-gradient: radial-gradient(circle at top, #101323 0, #050509 55%, #000 100%);
-  --bg-elevated: #0f1017;
-  --accent: #35c759;
-  --accent-soft: rgba(53, 199, 89, 0.16);
-  --accent-secondary: #7dd3fc;
-  --text: #f9fafb;
-  --text-muted: #9ca3af;
-  --danger: #f97373;
-  --border-subtle: #1f2933;
-  --card-radius: 16px;
-  --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.8);
-  --card-gradient: linear-gradient(
-    145deg,
-    rgba(31, 41, 55, 0.96),
-    rgba(15, 23, 42, 0.98)
-  );
-  --surface-soft: rgba(15, 23, 42, 0.9);
-  --input-bg: rgba(15, 23, 42, 0.85);
-  --input-border: rgba(148, 163, 184, 0.5);
-  --chip-bg: rgba(15, 23, 42, 0.9);
-  --chip-border: rgba(148, 163, 184, 0.6);
-  --font-main: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-    "Segoe UI", sans-serif;
-}
-
-:root[data-theme="light"] {
-  color-scheme: light;
-  --bg: #f5f7fb;
-  --bg-gradient: linear-gradient(180deg, #f8fbff 0%, #eef3fb 100%);
-  --bg-elevated: #ffffff;
-  --accent: #16a34a;
-  --accent-soft: rgba(22, 163, 74, 0.12);
-  --accent-secondary: #0c4a6e;
-  --text: #0f172a;
-  --text-muted: #334155;
-  --danger: #dc2626;
-  --border-subtle: #cbd5e1;
-  --shadow-soft: 0 10px 28px rgba(15, 23, 42, 0.12);
-  --card-gradient: linear-gradient(180deg, #ffffff, #f8fafc);
-  --surface-soft: #eef2f7;
-  --input-bg: #ffffff;
-  --input-border: #94a3b8;
-  --chip-bg: #eef2f7;
-  --chip-border: #94a3b8;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  background: var(--bg-gradient);
-  color: var(--text);
-  font-family: var(--font-main);
-}
-
-body {
-  min-height: 100vh;
-}
-
-#app {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 1.25rem 1rem 3rem;
-}
-
-.app-header {
-  text-align: left;
-  margin-bottom: 1.25rem;
-}
-
-.app-header h1 {
-  font-size: 1.6rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  margin: 0;
-}
-
-.subtitle {
-  margin: 0.25rem 0 0;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-
-.mini-footer {
-  margin-top: 1.15rem;
-  padding-top: 0.8rem;
-  border-top: 1px dashed rgba(148, 163, 184, 0.3);
-  text-align: center;
-}
-
-.mini-footer-line {
-  margin: 0.15rem 0;
-  color: var(--text-muted);
-  font-size: 0.74rem;
-  line-height: 1.35;
-}
-
-.mini-donate {
-  display: inline-block;
-  margin-top: 0.38rem;
-  padding: 0.2rem 0.55rem;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.45);
-  color: var(--text-muted);
-  font-size: 0.72rem;
-  text-decoration: none;
-  background: var(--surface-soft);
-}
-
-.mini-donate:active {
-  transform: scale(0.98);
-}
-
-.lang-switch {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin-top: 0.7rem;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-}
-
-.lang-switch select,
-.theme-switch select,
-.navapp-switch select {
-  background: var(--surface-soft);
-  color: var(--text);
-  border: 1px solid rgba(148, 163, 184, 0.45);
-  border-radius: 10px;
-  padding: 0.2rem 0.45rem;
-}
-
-.theme-switch {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin-top: 0.5rem;
-  margin-left: 0.65rem;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-}
-
-.navapp-switch {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin-top: 0.5rem;
-  margin-left: 0.65rem;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-}
-
-main {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.card {
-  background: var(--card-gradient);
-  border-radius: var(--card-radius);
-  padding: 1.1rem 1.1rem 1.2rem;
-  box-shadow: var(--shadow-soft);
-  border: 1px solid rgba(148, 163, 184, 0.25);
-}
-
-.card h2 {
-  font-size: 1.05rem;
-  margin: 0 0 0.4rem;
-}
-
-.hint {
-  margin: 0 0 0.75rem;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
-
-.hint.compact {
-  margin-top: -0.2rem;
-  margin-bottom: 0.55rem;
-  font-size: 0.82rem;
-}
-
-.cta-hint {
-  margin-top: 0.15rem;
-  margin-bottom: 0.45rem;
-}
-
-.btn {
-  width: 100%;
-  border-radius: 999px;
-  padding: 0.85rem 1.1rem;
-  border: none;
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease,
-    opacity 0.1s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn.big {
-  padding-block: 1.1rem;
-  font-size: 1.05rem;
-}
-
-.btn.primary {
-  background: linear-gradient(145deg, #22c55e, #16a34a);
-  color: #021109;
-  box-shadow: 0 14px 30px rgba(34, 197, 94, 0.35);
-}
-
-.btn.secondary {
-  background: var(--surface-soft);
-  color: var(--text);
-  border: 1px solid rgba(148, 163, 184, 0.35);
-}
-
-.btn:active {
-  transform: scale(0.97) translateY(1px);
-  box-shadow: none;
-}
-
-.btn:disabled {
-  opacity: 0.45;
-  cursor: default;
-  box-shadow: none;
-}
-
-.file-input-label {
-  display: block;
-  margin-bottom: 0.6rem;
-}
-
-.file-input-label input[type="file"] {
-  display: none;
-}
-
-.file-input-label span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 0.8rem 1.1rem;
-  border-radius: 999px;
-  border: 1px dashed rgba(148, 163, 184, 0.8);
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  cursor: pointer;
-  background: var(--surface-soft);
-}
-
-.file-input-label span:active {
-  transform: scale(0.98);
-}
-
-.status-text {
-  margin-top: 0.5rem;
-  font-size: 0.85rem;
-  line-height: 1.4;
-  color: var(--text-muted);
-}
-
-.status-text strong {
-  color: var(--accent);
-}
-
-.status-text.error {
-  color: var(--danger);
-}
-
-.status-text.info {
-  color: var(--accent-secondary);
-}
-
-.range-label {
-  display: block;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  margin-bottom: 0.6rem;
-}
-
-.label-with-info {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.info-tip {
-  margin: 0.2rem 0 0.35rem;
-}
-
-.info-tip.inline {
-  margin: 0;
-}
-
-.info-tip summary {
-  list-style: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1rem;
-  height: 1rem;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.55);
-  color: var(--text-muted);
-  font-size: 0.72rem;
-  cursor: pointer;
-  user-select: none;
-}
-
-.info-tip summary::-webkit-details-marker {
-  display: none;
-}
-
-.info-tip p {
-  margin: 0.35rem 0 0;
-  padding: 0.35rem 0.5rem;
-  border-radius: 8px;
-  background: var(--surface-soft);
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  line-height: 1.35;
-}
-
-.range-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.45rem;
-}
-
-.range-row input[type="number"] {
-  width: 28%;
-  padding: 0.5rem 0.6rem;
-  border-radius: 12px;
-  border: 1px solid var(--input-border);
-  background: var(--input-bg);
-  color: var(--text);
-  font-size: 0.95rem;
-}
-
-.range-row span {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
-
-.range-row input#corridor-width {
-  width: 30%;
-}
-
-.range-mode {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin-bottom: 0.5rem;
-}
-
-.poi-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin: 0.45rem 0 0.75rem;
-}
-
-#clear-filters-btn {
-  width: auto;
-  margin-top: -0.05rem;
-  margin-bottom: 0.55rem;
-  padding: 0.34rem 0.72rem;
-  font-size: 0.76rem;
-  opacity: 0.78;
-}
-
-#clear-filters-btn.subtle-action {
-  text-transform: none;
-  letter-spacing: 0.02em;
-}
-
-#clear-filters-btn.subtle-action:hover,
-#clear-filters-btn.subtle-action:focus-visible {
-  opacity: 1;
-}
-
-#show-map-btn {
-  margin-top: 0.45rem;
-}
-
-.filter-title {
-  margin: 0.7rem 0 0.2rem;
-  font-size: 0.83rem;
-  color: var(--text-muted);
-}
-
-.chip {
-  border-radius: 999px;
-  border: 1px solid var(--chip-border);
-  background: var(--chip-bg);
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  padding: 0.4rem 0.7rem;
-  cursor: pointer;
-  text-transform: none;
-}
-
-.chip.active {
-  background: var(--accent-soft);
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-.poi-list {
-  list-style: none;
-  margin: 0.6rem 0 0;
-  padding: 0;
-}
-
-.poi-item {
-  padding: 0.7rem 0.4rem;
-  border-bottom: 1px dashed rgba(148, 163, 184, 0.35);
-}
-
-.poi-line-main {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.95rem;
-}
-
-.poi-distance {
-  font-weight: 600;
-  color: var(--accent);
-  margin-right: 0.7rem;
-  white-space: nowrap;
-}
-
-.poi-name {
-  flex: 1;
-}
-
-.poi-type {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-}
-
-.poi-actions {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.poi-actions a {
-  text-decoration: none;
-}
-
-.poi-action-btn {
-  width: 100%;
-}
-
-.map-view {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  background: #050509;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.hidden {
-  display: none;
-}
-
-.map-header {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.3);
-  background: rgba(5, 5, 9, 0.95);
-  position: relative;
-  z-index: 1200;
-  overflow: visible;
-}
-
-.map-header .btn {
-  width: auto;
-  min-width: 120px;
-  padding: 0.6rem 0.95rem;
-  font-size: 0.9rem;
-}
-
-.map-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  color: var(--text-muted);
-  font-size: 0.82rem;
-  white-space: nowrap;
-}
-
-.map-unpaved-mode {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  white-space: nowrap;
-}
-
-.map-unpaved-mode select {
-  background: var(--surface-soft);
-  color: var(--text);
-  border: 1px solid rgba(148, 163, 184, 0.45);
-  border-radius: 8px;
-  padding: 0.15rem 0.35rem;
-  font-size: 0.78rem;
-}
-
-.map-toggle input {
-  width: 1.05rem;
-  height: 1.05rem;
-  accent-color: #22c55e;
-}
-
-.map-title {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
-
-.map-status {
-  margin: 0.15rem 0 0;
-  color: #f59e0b;
-  font-size: 0.78rem;
-  text-align: left;
-  flex-basis: 100%;
-  max-width: 100%;
-}
-
-.map-inline-tip {
-  position: relative;
-}
-
-.map-inline-tip p {
-  position: absolute;
-  left: 0;
-  right: auto;
-  top: 1.3rem;
-  width: min(92vw, 320px);
-  z-index: 1300;
-}
-
-.map-container {
-  height: calc(100dvh - 64px);
-  min-height: 320px;
-  position: relative;
-  z-index: 1;
-}
-
-.leaflet-popup-content-wrapper,
-.leaflet-popup-tip {
-  background: #0f172a;
-  color: var(--text);
-}
-
-.leaflet-popup-content {
-  margin: 0.65rem 0.75rem;
-}
-
-.map-legend {
-  background: rgba(5, 10, 20, 0.9);
-  color: #e5e7eb;
-  border: 1px solid rgba(148, 163, 184, 0.45);
-  border-radius: 10px;
-  padding: 0.45rem 0.55rem;
-  font-size: 0.76rem;
-  line-height: 1.35;
-}
-
-.legend-row {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  white-space: nowrap;
-}
-
-.legend-swatch {
-  width: 0.72rem;
-  height: 0.72rem;
-  border-radius: 2px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  flex-shrink: 0;
-}
-
-.popup-title {
-  margin: 0 0 0.3rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-.popup-meta {
-  margin: 0 0 0.5rem;
-  color: var(--text-muted);
-  font-size: 0.82rem;
-}
-
-.popup-link {
-  display: inline-block;
-  padding: 0.32rem 0.6rem;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.45);
-  text-decoration: none;
-  color: var(--text);
-  font-size: 0.82rem;
-}
-
-@media (min-width: 640px) {
-  #app {
-    padding-inline: 1.5rem;
-  }
-
-  .card {
-    padding-inline: 1.4rem;
-  }
-}
-
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ultra Route Sniper</title>
+  <meta name="description" content="Offline PWA · GPX · POI-Suche" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <meta name="theme-color" content="#16a34a" />
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  <style>
+    /* ── Ergänzungen für neue Sektionen (Spontansuche, Bike Shop) ── */
+    .custom-poi-section {
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px dashed rgba(148,163,184,0.25);
+    }
+    .custom-poi-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.4rem;
+    }
+    .custom-poi-row input[type="text"] {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text);
+      font-size: 0.92rem;
+    }
+    .custom-poi-row .btn {
+      width: auto;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+    .sniper-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .settings-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+
+    <!-- HEADER -->
+    <header class="app-header">
+      <h1 data-i18n="app.title">Ultra Route Sniper</h1>
+      <p class="subtitle" data-i18n="app.subtitle">Offline PWA · GPX · POI-Suche</p>
+
+      <div class="settings-row">
+        <span class="theme-switch">
+          <span data-i18n="app.themeLabel">Modus</span>
+          <select id="theme-select" aria-label="Farbmodus wählen">
+            <option value="system" data-i18n="app.themeSystem">System</option>
+            <option value="light"  data-i18n="app.themeLight">Hell</option>
+            <option value="dark"   data-i18n="app.themeDark">Dunkel</option>
+          </select>
+        </span>
+        <span class="navapp-switch">
+          <span data-i18n="app.navAppLabel">Navigation</span>
+          <select id="navapp-select" aria-label="Navigations-App wählen">
+            <option value="system" data-i18n="app.navAppSystem">Standard</option>
+            <option value="mapy"   data-i18n="app.navAppMapy">Mapy</option>
+            <option value="google" data-i18n="app.navAppGoogle">Google Maps</option>
+            <option value="apple"  data-i18n="app.navAppApple">Apple Karten</option>
+          </select>
+        </span>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+
+      <!-- 1. GPX -->
+      <section class="card" aria-labelledby="upload-title">
+        <h2 id="upload-title" data-i18n="upload.title">1. GPX-Strecke laden</h2>
+        <p class="hint" data-i18n="upload.hint">
+          GPX einmal laden. Danach bleibt die Strecke lokal gespeichert (offline nutzbar).
+        </p>
+        <label class="file-input-label">
+          <span data-i18n="upload.chooseFile">Datei wählen</span>
+          <input type="file" id="gpx-file-input" accept=".gpx" />
+        </label>
+        <button id="use-stored-gpx-btn" class="btn secondary" disabled data-i18n="upload.useStored">
+          Gespeicherte Strecke laden
+        </button>
+        <p id="gpx-status" class="status-text" role="status" aria-live="polite"></p>
+      </section>
+
+      <!-- 2. Ortung -->
+      <section class="card" aria-labelledby="location-title">
+        <h2 id="location-title" data-i18n="location.title">2. Ortung</h2>
+        <p class="hint" data-i18n="location.hint">Standort bestimmen und Route abgleichen.</p>
+        <button id="locate-btn" class="btn primary" data-i18n="location.startButton">
+          Standort bestimmen
+        </button>
+        <p id="location-status" class="status-text" role="status" aria-live="polite"></p>
+        <p id="route-position"  class="status-text" role="status" aria-live="polite"></p>
+      </section>
+
+      <!-- 3. POI-Suche -->
+      <section class="card" aria-labelledby="sniper-title">
+        <h2 id="sniper-title" data-i18n="sniper.title">3. POI-Suche</h2>
+        <p class="hint" data-i18n="sniper.hint">
+          Suche POIs im gewählten Kilometerfenster entlang der Route.
+        </p>
+
+        <!-- Modus -->
+        <div class="range-mode" role="group" aria-label="Suchmodus">
+          <button class="chip active" data-range-mode="plan" data-i18n="sniper.modePlan">Ab Routenstart</button>
+          <button class="chip"        data-range-mode="live" data-i18n="sniper.modeLive">Ab aktuellem Standort</button>
+        </div>
+        <p id="range-mode-hint" class="hint compact" data-i18n="sniper.modePlanHint">
+          Sucht ab Routenstart (km 0).
+        </p>
+
+        <!-- Suchfenster -->
+        <label class="range-label">
+          <span class="label-with-info">
+            <span data-i18n="sniper.windowLabel">Gewünschter Suchbereich (km entlang der Route):</span>
+            <details class="info-tip inline">
+              <summary>i</summary>
+              <p data-i18n="sniper.windowInfo">Von/Bis definiert den Suchbereich in Kilometern ab dem gewählten Modus.</p>
+            </details>
+          </span>
+        </label>
+        <div class="range-row">
+          <input type="number" id="range-start" min="0" max="9999" value="50" aria-label="Von km" />
+          <span>bis km</span>
+          <input type="number" id="range-end"   min="0" max="9999" value="120" aria-label="Bis km" />
+        </div>
+
+        <!-- Korridor -->
+        <label class="range-label" style="margin-top:0.75rem;">
+          <span class="label-with-info">
+            <span data-i18n="sniper.corridorLabel">Max. Abstand links/rechts der Route:</span>
+            <details class="info-tip inline">
+              <summary>i</summary>
+              <p data-i18n="sniper.corridorInfo">Nur POIs innerhalb dieses Abstands zur Route werden angezeigt.</p>
+            </details>
+          </span>
+        </label>
+        <div class="range-row">
+          <input type="number" id="corridor-width" min="1" max="10" value="2" aria-label="Korridorbreite" />
+          <span data-i18n="sniper.corridorRange">km (1–10)</span>
+        </div>
+
+        <!-- POI-Filter -->
+        <p class="filter-title" data-i18n="sniper.filterTitle">POI-Filter (ein/aus):</p>
+        <div class="poi-filters" role="group" aria-label="POI-Kategorien">
+          <button class="chip active" data-poi-filter="lodging"    data-i18n="poi.lodging">Unterkunft</button>
+          <button class="chip active" data-poi-filter="fuel"       data-i18n="poi.fuel">Tankstelle</button>
+          <button class="chip active" data-poi-filter="bikeshop"   data-i18n="poi.bikeshop">Bike Shop</button>
+          <button class="chip active" data-poi-filter="grocery"    data-i18n="poi.grocery">Shop</button>
+          <button class="chip active" data-poi-filter="restaurant" data-i18n="poi.restaurant">Restaurant</button>
+          <button class="chip active" data-poi-filter="cafe"       data-i18n="poi.cafe">Cafe/Bäckerei</button>
+          <button class="chip active" data-poi-filter="fastfood"   data-i18n="poi.fastfood">Fast Food</button>
+          <button class="chip active" data-poi-filter="water"      data-i18n="poi.water">Wasser</button>
+          <button class="chip active" data-poi-filter="camping"    data-i18n="poi.camping">Camping</button>
+          <button class="chip active" data-poi-filter="shelter"    data-i18n="poi.shelter">Shelter</button>
+        </div>
+        <button id="clear-filters-btn" class="btn secondary subtle-action" data-i18n="sniper.clearFilters">
+          Alle Filter deaktivieren
+        </button>
+
+        <!-- Spontansuche -->
+        <div class="custom-poi-section">
+          <p class="filter-title" data-i18n="sniper.customLabel">Spontansuche (freier Begriff):</p>
+          <p class="hint compact" data-i18n="sniper.customHint">z.B. Krankenhaus, Polizei, Apotheke …</p>
+          <div class="custom-poi-row">
+            <input
+              type="text"
+              id="custom-poi-input"
+              placeholder="z.B. Krankenhaus"
+              aria-label="Freier Suchbegriff"
+            />
+            <button id="custom-poi-btn" class="btn primary" data-i18n="sniper.customButton">Suchen</button>
+          </div>
+          <p id="custom-poi-status" class="status-text" role="status" aria-live="polite"></p>
+          <ul id="custom-poi-list" class="poi-list"></ul>
+        </div>
+
+        <p class="hint cta-hint" data-i18n="sniper.ctaHint">Filter gesetzt? Dann POIs suchen.</p>
+        <p id="sniper-status" class="status-text" role="status" aria-live="polite"></p>
+
+        <div class="sniper-actions">
+          <button id="sniper-btn"  class="btn primary"   disabled data-i18n="sniper.scanButton">POIs suchen</button>
+          <button id="show-map-btn" class="btn secondary" disabled data-i18n="sniper.showMapButton">Karte anzeigen</button>
+        </div>
+
+        <ul id="poi-list" class="poi-list" aria-live="polite" aria-label="Gefundene POIs"></ul>
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mini-footer">
+      <p class="mini-footer-line" data-i18n="app.footerBy">Von Thomas Fischer (@bikepeopletom)</p>
+      <p class="mini-footer-line" data-i18n="app.footerTagline">Proudly built in Switzerland for the ultracycling community.</p>
+      <p class="mini-footer-line">
+        <a href="https://github.com/tomfischer72/ultra-route-sniper/tree/master"
+           target="_blank" rel="noopener noreferrer" style="color:var(--text-muted)">GitHub Repo</a>
+        &nbsp;·&nbsp;
+        <a href="./impressum.html"          style="color:var(--text-muted)">Impressum</a> ·
+        <a href="./datenschutz.html"         style="color:var(--text-muted)">Datenschutz</a> ·
+        <a href="./nutzungsbedingungen.html" style="color:var(--text-muted)">Nutzungsbedingungen</a>
+      </p>
+      <a href="./donate.html" class="mini-donate" data-i18n="app.footerDonate">Unterstützen</a>
+    </footer>
+
+  </div><!-- /#app -->
+
+  <!-- MAP VIEW -->
+  <div id="map-view" class="map-view hidden" aria-hidden="true">
+    <div class="map-header">
+      <button id="back-to-list-btn" class="btn secondary" data-i18n="map.backToList">Zur Liste</button>
+
+      <label class="map-toggle">
+        <input type="checkbox" id="unpaved-toggle" checked />
+        <span data-i18n="map.unpavedToggle">Unbefestigt</span>
+      </label>
+
+      <span class="map-unpaved-mode">
+        <span data-i18n="map.unpavedModeLabel">Unpaved-Modus</span>
+        <select id="unpaved-mode-select" aria-label="Unpaved-Modus">
+          <option value="conservative" data-i18n="map.unpavedModeConservative">Konservativ</option>
+          <option value="normal"       data-i18n="map.unpavedModeNormal">Normal</option>
+        </select>
+      </span>
+
+      <details class="info-tip map-inline-tip">
+        <summary>i</summary>
+        <p data-i18n="map.unpavedModeInfo">Konservativ zeigt weniger, aber sicherere unbefestigte Abschnitte.</p>
+      </details>
+
+      <p class="map-title" id="map-view-title" data-i18n="map.title">Kartenansicht</p>
+      <p class="map-status" id="map-status" role="status" aria-live="polite"></p>
+    </div>
+
+    <div id="map-container" class="map-container"></div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
