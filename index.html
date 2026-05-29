@@ -12,6 +12,262 @@
   <link rel="stylesheet" href="./styles.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  <style>
+    /* ── Ergänzungen für neue Sektionen (Spontansuche, Bike Shop) ── */
+    .custom-poi-section {
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px dashed rgba(148,163,184,0.25);
+    }
+    .custom-poi-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.4rem;
+    }
+    .custom-poi-row input[type="text"] {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text);
+      font-size: 0.92rem;
+    }
+    .custom-poi-row .btn {
+      width: auto;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+    .sniper-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .settings-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+
+    <!-- HEADER -->
+    <header class="app-header">
+      <h1 data-i18n="app.title">Ultra Route Sniper</h1>
+      <p class="subtitle" data-i18n="app.subtitle">Offline PWA · GPX · POI-Suche</p>
+
+      <div class="settings-row">
+        <span class="theme-switch">
+          <span data-i18n="app.themeLabel">Modus</span>
+          <select id="theme-select" aria-label="Farbmodus wählen">
+            <option value="system" data-i18n="app.themeSystem">System</option>
+            <option value="light"  data-i18n="app.themeLight">Hell</option>
+            <option value="dark"   data-i18n="app.themeDark">Dunkel</option>
+          </select>
+        </span>
+        <span class="navapp-switch">
+          <span data-i18n="app.navAppLabel">Navigation</span>
+          <select id="navapp-select" aria-label="Navigations-App wählen">
+            <option value="system" data-i18n="app.navAppSystem">Standard</option>
+            <option value="mapy"   data-i18n="app.navAppMapy">Mapy</option>
+            <option value="google" data-i18n="app.navAppGoogle">Google Maps</option>
+            <option value="apple"  data-i18n="app.navAppApple">Apple Karten</option>
+          </select>
+        </span>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+
+      <!-- 1. GPX -->
+      <section class="card" aria-labelledby="upload-title">
+        <h2 id="upload-title" data-i18n="upload.title">1. GPX-Strecke laden</h2>
+        <p class="hint" data-i18n="upload.hint">
+          GPX einmal laden. Danach bleibt die Strecke lokal gespeichert (offline nutzbar).
+        </p>
+        <label class="file-input-label">
+          <span data-i18n="upload.chooseFile">Datei wählen</span>
+          <input type="file" id="gpx-file-input" accept=".gpx" />
+        </label>
+        <button id="use-stored-gpx-btn" class="btn secondary" disabled data-i18n="upload.useStored">
+          Gespeicherte Strecke laden
+        </button>
+        <p id="gpx-status" class="status-text" role="status" aria-live="polite"></p>
+      </section>
+
+      <!-- 2. Ortung -->
+      <section class="card" aria-labelledby="location-title">
+        <h2 id="location-title" data-i18n="location.title">2. Ortung</h2>
+        <p class="hint" data-i18n="location.hint">Standort bestimmen und Route abgleichen.</p>
+        <button id="locate-btn" class="btn primary" data-i18n="location.startButton">
+          Standort bestimmen
+        </button>
+        <p id="location-status" class="status-text" role="status" aria-live="polite"></p>
+        <p id="route-position"  class="status-text" role="status" aria-live="polite"></p>
+      </section>
+
+      <!-- 3. POI-Suche -->
+      <section class="card" aria-labelledby="sniper-title">
+        <h2 id="sniper-title" data-i18n="sniper.title">3. POI-Suche</h2>
+        <p class="hint" data-i18n="sniper.hint">
+          Suche POIs im gewählten Kilometerfenster entlang der Route.
+        </p>
+
+        <!-- Modus -->
+        <div class="range-mode" role="group" aria-label="Suchmodus">
+          <button class="chip active" data-range-mode="plan" data-i18n="sniper.modePlan">Ab Routenstart</button>
+          <button class="chip"        data-range-mode="live" data-i18n="sniper.modeLive">Ab aktuellem Standort</button>
+        </div>
+        <p id="range-mode-hint" class="hint compact" data-i18n="sniper.modePlanHint">
+          Sucht ab Routenstart (km 0).
+        </p>
+
+        <!-- Suchfenster -->
+        <label class="range-label">
+          <span class="label-with-info">
+            <span data-i18n="sniper.windowLabel">Gewünschter Suchbereich (km entlang der Route):</span>
+            <details class="info-tip inline">
+              <summary>i</summary>
+              <p data-i18n="sniper.windowInfo">Von/Bis definiert den Suchbereich in Kilometern ab dem gewählten Modus.</p>
+            </details>
+          </span>
+        </label>
+        <div class="range-row">
+          <input type="number" id="range-start" min="0" max="9999" value="50" aria-label="Von km" />
+          <span>bis km</span>
+          <input type="number" id="range-end"   min="0" max="9999" value="120" aria-label="Bis km" />
+        </div>
+
+        <!-- Korridor -->
+        <label class="range-label" style="margin-top:0.75rem;">
+          <span class="label-with-info">
+            <span data-i18n="sniper.corridorLabel">Max. Abstand links/rechts der Route:</span>
+            <details class="info-tip inline">
+              <summary>i</summary>
+              <p data-i18n="sniper.corridorInfo">Nur POIs innerhalb dieses Abstands zur Route werden angezeigt.</p>
+            </details>
+          </span>
+        </label>
+        <div class="range-row">
+          <input type="number" id="corridor-width" min="1" max="10" value="2" aria-label="Korridorbreite" />
+          <span data-i18n="sniper.corridorRange">km (1–10)</span>
+        </div>
+
+        <!-- POI-Filter -->
+        <p class="filter-title" data-i18n="sniper.filterTitle">POI-Filter (ein/aus):</p>
+        <div class="poi-filters" role="group" aria-label="POI-Kategorien">
+          <button class="chip active" data-poi-filter="lodging"    data-i18n="poi.lodging">Unterkunft</button>
+          <button class="chip active" data-poi-filter="fuel"       data-i18n="poi.fuel">Tankstelle</button>
+          <button class="chip active" data-poi-filter="bikeshop"   data-i18n="poi.bikeshop">Bike Shop</button>
+          <button class="chip active" data-poi-filter="grocery"    data-i18n="poi.grocery">Shop</button>
+          <button class="chip active" data-poi-filter="restaurant" data-i18n="poi.restaurant">Restaurant</button>
+          <button class="chip active" data-poi-filter="cafe"       data-i18n="poi.cafe">Cafe/Bäckerei</button>
+          <button class="chip active" data-poi-filter="fastfood"   data-i18n="poi.fastfood">Fast Food</button>
+          <button class="chip active" data-poi-filter="water"      data-i18n="poi.water">Wasser</button>
+          <button class="chip active" data-poi-filter="camping"    data-i18n="poi.camping">Camping</button>
+          <button class="chip active" data-poi-filter="shelter"    data-i18n="poi.shelter">Shelter</button>
+        </div>
+        <button id="clear-filters-btn" class="btn secondary subtle-action" data-i18n="sniper.clearFilters">
+          Alle Filter deaktivieren
+        </button>
+
+        <!-- Spontansuche -->
+        <div class="custom-poi-section">
+          <p class="filter-title" data-i18n="sniper.customLabel">Spontansuche (freier Begriff):</p>
+          <p class="hint compact" data-i18n="sniper.customHint">z.B. Krankenhaus, Polizei, Apotheke …</p>
+          <div class="custom-poi-row">
+            <input
+              type="text"
+              id="custom-poi-input"
+              placeholder="z.B. Krankenhaus"
+              aria-label="Freier Suchbegriff"
+            />
+            <button id="custom-poi-btn" class="btn primary" data-i18n="sniper.customButton">Suchen</button>
+          </div>
+          <p id="custom-poi-status" class="status-text" role="status" aria-live="polite"></p>
+          <ul id="custom-poi-list" class="poi-list"></ul>
+        </div>
+
+        <p class="hint cta-hint" data-i18n="sniper.ctaHint">Filter gesetzt? Dann POIs suchen.</p>
+        <p id="sniper-status" class="status-text" role="status" aria-live="polite"></p>
+
+        <div class="sniper-actions">
+          <button id="sniper-btn"  class="btn primary"   disabled data-i18n="sniper.scanButton">POIs suchen</button>
+          <button id="show-map-btn" class="btn secondary" disabled data-i18n="sniper.showMapButton">Karte anzeigen</button>
+        </div>
+
+        <ul id="poi-list" class="poi-list" aria-live="polite" aria-label="Gefundene POIs"></ul>
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mini-footer">
+      <p class="mini-footer-line" data-i18n="app.footerBy">Von Thomas Fischer (@bikepeopletom)</p>
+      <p class="mini-footer-line" data-i18n="app.footerTagline">Proudly built in Switzerland for the ultracycling community.</p>
+      <p class="mini-footer-line">
+        <a href="https://github.com/tomfischer72/ultra-route-sniper/tree/master"
+           target="_blank" rel="noopener noreferrer" style="color:var(--text-muted)">GitHub Repo</a>
+        &nbsp;·&nbsp;
+        <a href="./impressum.html"          style="color:var(--text-muted)">Impressum</a> ·
+        <a href="./datenschutz.html"         style="color:var(--text-muted)">Datenschutz</a> ·
+        <a href="./nutzungsbedingungen.html" style="color:var(--text-muted)">Nutzungsbedingungen</a>
+      </p>
+      <a href="./donate.html" class="mini-donate" data-i18n="app.footerDonate">Unterstützen</a>
+    </footer>
+
+  </div><!-- /#app -->
+
+  <!-- MAP VIEW -->
+  <div id="map-view" class="map-view hidden" aria-hidden="true">
+    <div class="map-header">
+      <button id="back-to-list-btn" class="btn secondary" data-i18n="map.backToList">Zur Liste</button>
+
+      <label class="map-toggle">
+        <input type="checkbox" id="unpaved-toggle" checked />
+        <span data-i18n="map.unpavedToggle">Unbefestigt</span>
+      </label>
+
+      <span class="map-unpaved-mode">
+        <span data-i18n="map.unpavedModeLabel">Unpaved-Modus</span>
+        <select id="unpaved-mode-select" aria-label="Unpaved-Modus">
+          <option value="conservative" data-i18n="map.unpavedModeConservative">Konservativ</option>
+          <option value="normal"       data-i18n="map.unpavedModeNormal">Normal</option>
+        </select>
+      </span>
+
+      <details class="info-tip map-inline-tip">
+        <summary>i</summary>
+        <p data-i18n="map.unpavedModeInfo">Konservativ zeigt weniger, aber sicherere unbefestigte Abschnitte.</p>
+      </details>
+
+      <p class="map-title" id="map-view-title" data-i18n="map.title">Kartenansicht</p>
+      <p class="map-status" id="map-status" role="status" aria-live="polite"></p>
+    </div>
+
+    <div id="map-container" class="map-container"></div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html><!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ultra Route Sniper</title>
+  <meta name="description" content="Offline PWA · GPX · POI-Suche" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <meta name="theme-color" content="#16a34a" />
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
 </head>
 <body>
   <div class="app-shell">
