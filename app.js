@@ -1056,6 +1056,19 @@ async function handleCustomPoiClick() {
 
     setStatus(status, t("sniper.customFound", { count: filtered.length, term }), "info");
     renderCustomPoiList(filtered, list);
+
+    // Ergebnisse in lastScanResults mergen → Karte wird aktiv
+    // Bereits vorhandene Custom-POIs entfernen, neue hinzufügen
+    lastScanResults = lastScanResults.filter((p) => p.category !== "custom").concat(filtered);
+
+    // Segment-Punkte sicherstellen damit die Karte eine Route hat
+    if (!lastScanSegmentPoints.length && routePoints.length) {
+      lastScanSegmentPoints = routePoints;
+    }
+
+    const showMapBtn = document.getElementById("show-map-btn");
+    if (showMapBtn) showMapBtn.disabled = false;
+
   } catch (err) {
     console.error(err);
     setStatus(status, t("sniper.customError"), "error");
