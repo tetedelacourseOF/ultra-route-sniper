@@ -1058,12 +1058,22 @@ async function handleCustomPoiClick() {
     renderCustomPoiList(filtered, list);
 
     // Ergebnisse in lastScanResults mergen → Karte wird aktiv
-    // Bereits vorhandene Custom-POIs entfernen, neue hinzufügen
     lastScanResults = lastScanResults.filter((p) => p.category !== "custom").concat(filtered);
 
-    // Segment-Punkte sicherstellen damit die Karte eine Route hat
+    // Segment-Punkte sicherstellen
     if (!lastScanSegmentPoints.length && routePoints.length) {
       lastScanSegmentPoints = routePoints;
+    }
+    // lastScanRange sicherstellen (wird von renderMapForLastScan benötigt)
+    if (!lastScanRange) {
+      const routeTotalKm = routePoints.length ? routePoints[routePoints.length - 1].cumDistKm : 0;
+      lastScanRange = {
+        startKmAhead: 0,
+        endKmAhead: routeTotalKm,
+        corridorWidthKm: getCorridorWidthKm(),
+        mode: activeRangeMode,
+        referenceKm: (activeRangeMode === "live" && lastRouteMatch) ? lastRouteMatch.kmOnRoute : 0,
+      };
     }
 
     const showMapBtn = document.getElementById("show-map-btn");
@@ -1084,21 +1094,19 @@ async function fetchCustomPois(bbox, tagPairs, term) {
   const { minLat, maxLat, minLon, maxLon } = bbox;
   const B = `${minLat},${minLon},${maxLat},${maxLon}`;
 
-  // Build union of tag queries + name search
+  // Nodes, Ways und Relations abfragen → center liefert einen einzigen Punkt pro Objekt
   const tagLines = tagPairs
-    .map(([key, val]) => `node["${key}"="${val}"](${B});`)
+    .map(([key, val]) =>
+      `node["${key}"="${val}"](${B});\n      way["${key}"="${val}"](${B});\n      relation["${key}"="${val}"](${B});`
+    )
     .join("\n      ");
-
-  // Also search by name (case-insensitive) as safety net
-  const nameSearch = `node["name"~"${term}",i](${B});`;
 
   const query = `
     [out:json][timeout:25];
     (
       ${tagLines}
-      ${nameSearch}
     );
-    out body;
+    out center;
   `;
 
   const response = await fetch(OVERPASS_ENDPOINT, {
@@ -1110,16 +1118,26 @@ async function fetchCustomPois(bbox, tagPairs, term) {
   const data = await response.json();
   if (!data.elements) return [];
 
-  // Deduplicate by id
+  // Koordinaten: node → lat/lon direkt; way/relation → center
   const seen = new Set();
   return data.elements
-    .filter((el) => el.type === "node" && typeof el.lat === "number" && !seen.has(el.id) && seen.add(el.id))
     .map((el) => {
+      const lat = el.lat ?? el.center?.lat;
+      const lon = el.lon ?? el.center?.lon;
+      if (typeof lat !== "number" || typeof lon !== "number") return null;
+      // Deduplizierung über Position (verhindert Duplikate durch überlappende Tag-Abfragen)
+      const posKey = `${lat.toFixed(5)},${lon.toFixed(5)}`;
+      if (seen.has(posKey)) return null;
+      seen.add(posKey);
+      return { el, lat, lon };
+    })
+    .filter(Boolean)
+    .map(({ el, lat, lon }) => {
       const tags = el.tags || {};
       return {
         id: el.id,
-        lat: el.lat,
-        lon: el.lon,
+        lat,
+        lon,
         name: tags.name || tags.ref || term,
         typeKey: "poi.custom",
         category: "custom",
